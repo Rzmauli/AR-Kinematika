@@ -1,27 +1,22 @@
 body{
-
     margin:0;
-
     overflow:hidden;
-
-    font-family:Arial;
+    font-family:Arial, sans-serif;
 }
 
-/* ======================
-   UI PANEL
-====================== */
+/* PANEL */
 
 #panel{
-
     position:absolute;
-
     left:10px;
-
     top:10px;
 
     width:350px;
+    max-height:90vh;
 
-    background:white;
+    overflow-y:auto;
+
+    background:rgba(255,255,255,0.95);
 
     padding:20px;
 
@@ -29,254 +24,152 @@ body{
 
     z-index:999;
 
-    box-shadow:
-    0 0 15px rgba(0,0,0,0.3);
+    box-shadow:0 0 15px rgba(0,0,0,0.3);
 
-    transition:0.3s;
+    transition:0.3s ease;
 }
 
+/* HIDE PANEL */
+
+#panel.hide{
+    transform:translateX(-120%);
+    opacity:0;
+    pointer-events:none;
+}
+
+/* JUDUL */
+
 h1{
-
     margin-top:0;
-
     color:#2c3e50;
 }
 
+/* LABEL */
+
 label{
-
     display:block;
-
     margin-top:15px;
-
     font-weight:bold;
 }
 
-input[type=range]{
+/* INPUT */
 
+input[type=range]{
     width:100%;
 }
 
 select{
-
     width:100%;
-
     padding:8px;
-
     border-radius:8px;
-
     margin-top:5px;
 }
 
-/* ======================
-   SPEEDOMETER
-====================== */
+/* SPEEDOMETER */
 
 #speedometer{
-
     background:#f4f4f4;
-
     padding:20px;
-
     text-align:center;
-
     font-size:55px;
-
     font-weight:bold;
-
     border-radius:15px;
-
     margin-top:20px;
 }
 
-/* ======================
-   BOX FISIKA
-====================== */
+/* BOX */
 
 .box{
-
     background:#ecf0f1;
-
     padding:15px;
-
     border-radius:15px;
-
     margin-top:20px;
 }
 
+/* TOTAL */
+
 .total{
-
     color:#c0392b;
-
     font-weight:bold;
-
     font-size:28px;
 }
 
-/* ======================
-   BUTTON
-====================== */
+/* BUTTON */
 
 button{
-
     width:100%;
-
     padding:15px;
-
     border:none;
-
     border-radius:10px;
-
     margin-top:15px;
-
     color:white;
-
     font-size:22px;
-
     font-weight:bold;
-
     cursor:pointer;
 }
 
 #startBtn{
-
     background:#2ecc71;
 }
 
 #resetBtn{
-
     background:#e67e22;
 }
 
-/* ======================
-   STATUS
-====================== */
+/* STATUS */
 
 #status{
-
-    color:#2c3e50;
-
     margin-top:20px;
+    font-weight:bold;
 }
 
-/* ======================
-   CHART
-====================== */
+/* CHART */
 
 canvas{
-
     margin-top:20px;
 }
 
-/* ======================
-   MOBILE
-====================== */
+/* TOGGLE BUTTON */
+
+#toggleUI{
+    position:fixed;
+
+    top:15px;
+    right:15px;
+
+    z-index:9999;
+
+    background:#1e293b;
+    color:white;
+
+    border:none;
+
+    border-radius:12px;
+
+    padding:10px 16px;
+
+    font-size:16px;
+    font-weight:bold;
+
+    width:auto;
+
+    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* MOBILE */
 
 @media(max-width:768px){
 
     #panel{
+        width:280px;
+        padding:15px;
+    }
 
-        width:90%;
-
-        left:5%;
-
-        top:10px;
+    h1{
+        font-size:24px;
     }
 
     #speedometer{
-
         font-size:40px;
     }
-}
-    #speedometer{
-
-        font-size:40px;
-    }
-}
-/* =========================
-   TOGGLE BUTTON
-========================= */
-
-#toggleUI{
-
-  position: fixed;
-
-  top: 15px;
-  right: 15px;
-
-  z-index: 9999;
-
-  background: #1e293b;
-  color: white;
-
-  border: none;
-  border-radius: 12px;
-
-  padding: 10px 16px;
-
-  font-size: 16px;
-  font-weight: bold;
-
-  width: auto;
-  min-width: unset;
-
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-
-}
-/* =========================
-   PANEL MOBILE
-========================= */
-
-.panel{
-
-  width: 320px;
-  max-width: 85vw;
-
-  transition: all 0.3s ease;
-
-}
-
-/* hidden */
-
-
-.panel.hide{
-
-  transform: translateX(-120%);
-  opacity: 0;
-  pointer-events:none;
-
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:768px){
-
-  .panel{
-
-    width: 280px;
-
-    padding: 15px;
-
-  }
-
-  h1{
-    font-size: 24px;
-  }
-
-  #speedometer{
-    font-size: 40px;
-  }
-
-  canvas{
-    width: 100vw !important;
-    height: 100vh !important;
-  }
-
-}
-.panel.hide{
-
-  transform: translateX(-120%);
-  opacity: 0;
-
 }
