@@ -472,3 +472,18 @@ toggleBtn.onclick = () => {
   panel.classList.toggle("hide");
 
 };
+/* =========================
+   TOGGLE PANEL
+========================= */
+
+const toggleUI =
+document.getElementById("toggleUI");
+
+const panel =
+document.getElementById("panel");
+
+toggleUI.addEventListener("click", () => {
+
+  panel.classList.toggle("hide");
+
+});
