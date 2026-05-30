@@ -5,12 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulasi AR Tol - Fisika Presisi & Grafik Kecepatan</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> 
     <script src="https://cdn.jsdelivr.net/npm/meshoptimizer@0.19.0/meshopt_decoder.js"></script>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -20,10 +18,31 @@
             font-family: Arial, sans-serif;
         }
 
+        /* GAYA UNTUK TOMBOL TOGGLE */
+        #toggleBtn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background 0.3s;
+        }
+
+        #toggleBtn:hover {
+            background: #2c3e50;
+        }
+
         /* PANEL KONTROL */
         #panel {
             position: absolute;
-            top: 10px;
+            top: 55px; /* Diturunkan agar tidak menabrak tombol toggle */
             left: 10px;
             width: 340px;
             background: rgba(255, 255, 255, 0.95);
@@ -31,15 +50,30 @@
             border-radius: 10px;
             z-index: 999;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
+            transition: transform 0.3s ease-in-out; /* Animasi geser */
+        }
+
+        /* KELAS UNTUK MENYEMBUNYIKAN PANEL */
+        #panel.hidden {
+            transform: translateX(-120%);
+        }
+
+        /* RESPONSIVITAS UNTUK HP */
+        @media (max-width: 768px) {
+            #panel {
+                width: 85vw;
+                max-width: 340px;
+                max-height: 80vh;
+            }
         }
 
         .slider {
             width: 100%;
         }
 
-        button {
+        button.action-btn {
             width: 100%;
             padding: 10px;
             margin-top: 8px;
@@ -70,30 +104,21 @@
 </head>
 
 <body>
-<button id="toggleUI">☰ MENU</button>
+
+    <button id="toggleBtn">✖ Sembunyikan Panel</button>
+
     <div id="panel">
         <h1 style="font-size: 18px; margin-top: 0; color: #2c3e50;">Analisis Fisika Jarak Henti</h1>
         
+        <label style="font-size:13px;font-weight:bold;">Usia Pengemudi:</label>
+        <select id="ageSelect" class="slider">
+            <option value="young">18 - 25 Tahun</option>
+            <option value="adult" selected>26 - 45 Tahun</option>
+            <option value="old">46 - 70 Tahun</option>
+        </select>
+        
+        <br><br>
         <label style="font-size: 13px; font-weight: bold;">Kecepatan Awal Mobil B:</label>
-        <label style="font-size:13px;font-weight:bold;">
-Usia Pengemudi:
-</label>
-
-<select id="ageSelect" class="slider">
-
-<option value="young">
-18 - 25 Tahun
-</option>
-
-<option value="adult" selected>
-26 - 45 Tahun
-</option>
-
-<option value="old">
-46 - 70 Tahun
-</option>
-
-</select>
         <input type="range" min="40" max="140" value="90" id="speedSlider" class="slider">
         <p class="info-text">Target Kecepatan: <span id="speedValue">90</span> km/jam</p>
         
@@ -102,26 +127,24 @@ Usia Pengemudi:
         <div style="background: #ecf0f1; padding: 8px; border-radius: 5px; margin-top: 5px;">
             <p class="info-text">Waktu Reaksi ($t_r$): <span id="reactionTime">1.50</span> s</p>
             <p class="info-text">Jarak Reaksi ($d_r$): <span id="reactionDistance">-</span> m</p>
-            <p class="info-text">Jarak Pengeremen ($d_b$): <span id="brakingDistance">-</span> m</p>
+            <p class="info-text">Jarak Pengereman ($d_b$): <span id="brakingDistance">-</span> m</p>
             <p class="info-text" style="font-weight: bold; color: #c0392b;">Total Jarak Henti ($d_s$): <span id="stoppingDistance">-</span> m</p>
         </div>
 
-        <button id="startBtn">MULAI SIMULASI</button>
-        <button id="resetBtn">RESET</button>
+        <button id="startBtn" class="action-btn">MULAI SIMULASI</button>
+        <button id="resetBtn" class="action-btn">RESET</button>
         <p id="status">Status: Siap</p>
 
         <canvas id="velocityChart" width="300" height="200"></canvas>
     </div>
 
     <a-scene embedded renderer="antialias: true; colorManagement: true;" fog="type: exponential; color: #7f8c8d; density: 0.015">
-
-<a-assets>
-    <img id="roadTexture" src="textures/asphalt.jpg">
-    <audio id="brakeSound" src="sounds/brake.mp3"></audio>
-    
-    <a-asset-item id="carBlue" src="models/carBlue.glb"></a-asset-item>
-    <a-asset-item id="carRed" src="models/carRed.glb"></a-asset-item>
-</a-assets>
+        <a-assets>
+            <img id="roadTexture" src="textures/asphalt.jpg">
+            <audio id="brakeSound" src="sounds/brake.mp3"></audio>
+            <a-asset-item id="carBlue" src="models/carBlue.glb"></a-asset-item>
+            <a-asset-item id="carRed" src="models/carRed.glb"></a-asset-item>
+        </a-assets>
 
         <a-light type="ambient" intensity="0.7"></a-light>
         <a-light type="directional" intensity="0.8" position="0 10 5"></a-light>
@@ -138,14 +161,29 @@ Usia Pengemudi:
         <a-entity id="markaContainer"></a-entity>
 
         <a-entity id="mobilA" gltf-model="#carBlue" position="0 0 -120" scale="0.7 0.7 0.7" rotation="0 180 0"></a-entity>
-
         <a-entity id="mobilB" gltf-model="#carRed" position="0 0 0" scale="0.7 0.7 0.7" rotation="0 180 0"></a-entity>
-
         <a-entity camera position="0 2 6"></a-entity>
-
     </a-scene>
 
     <script>
+        /* ===================================================
+           LOGIKA BUKA-TUTUP PANEL
+        =================================================== */
+        const toggleBtn = document.getElementById("toggleBtn");
+        const panel = document.getElementById("panel");
+
+        toggleBtn.addEventListener("click", () => {
+            panel.classList.toggle("hidden");
+            
+            if (panel.classList.contains("hidden")) {
+                toggleBtn.innerHTML = "☰ Tampilkan Panel";
+                toggleBtn.style.background = "#2ecc71";
+            } else {
+                toggleBtn.innerHTML = "✖ Sembunyikan Panel";
+                toggleBtn.style.background = "#34495e";
+            }
+        });
+
         /* ===================================================
            KOMPONEN HUJAN RINGAN & STABIL
         =================================================== */
@@ -178,20 +216,20 @@ Usia Pengemudi:
         const velocityChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: [], // Mengisi data detik (Waktu)
+                labels: [], 
                 datasets: [{
                     label: 'Kecepatan Mobil B (km/jam)',
-                    data: [], // Mengisi data kecepatan riil
+                    data: [], 
                     borderColor: '#e74c3c',
                     backgroundColor: 'rgba(231, 76, 60, 0.1)',
                     borderWidth: 2,
                     fill: true,
-                    pointRadius: 0 // Menghilangkan titik kecil agar grafik mulus
+                    pointRadius: 0
                 }]
             },
             options: {
                 responsive: true,
-                animation: false, // Dimatikan agar update grafik realtime super enteng
+                animation: false, 
                 scales: {
                     x: { title: { display: true, text: 'Waktu (detik)', font: { size: 10 } } },
                     y: { beginAtZero: true, title: { display: true, text: 'Kecepatan (km/jam)', font: { size: 10 } } }
@@ -215,17 +253,15 @@ Usia Pengemudi:
         const envSky = document.querySelector("#envSky");
         const rainEffect = document.querySelector("#rainEffect");
 
-        // Konstanta Fisika Lingkungan
-        const t_r = 1.5;     // Waktu reaksi standar manusia (kondisi hujan/waspada) dalam sekon
-        const mu = 0.35;    // Koefisien gesek ban pada aspal basah kuyup (Rainy condition)
-        const g = 9.81;     // Percepatan gravitasi bumi (m/s²)
-        const speedA_ms = 50 / 3.6; // Kecepatan konstan mobil depan = 50 km/jam
+        const t_r = 1.5;     
+        const mu = 0.35;    
+        const g = 9.81;     
+        const speedA_ms = 50 / 3.6; 
 
-        // State Posisi & Simulasi
         let speedB_kmh = 90; 
-        let v0 = speedB_kmh / 3.6; // Kecepatan awal Mobil B dalam m/s
-        let zA = -120; // Posisi awal Mobil A (120 meter di depan)
-        let zB = 0;    // Posisi awal Mobil B
+        let v0 = speedB_kmh / 3.6; 
+        let zA = -120; 
+        let zB = 0;    
         
         let currentSpeedB = 0;
         let simTime = 0;
@@ -235,13 +271,12 @@ Usia Pengemudi:
 
         function calculatePhysics() {
             speedB_kmh = parseInt(speedSlider.value);
-            v0 = speedB_kmh / 3.6; // Konversi km/jam ke m/s
+            v0 = speedB_kmh / 3.6; 
             speedValue.innerHTML = speedB_kmh;
 
-            // Rumus Fisika Kinematika Berdasarkan Teori GLBB
-            let reactionDistance = v0 * t_r;                     // d_r = v * t
-            let brakingDistance = (v0 * v0) / (2 * mu * g);       // d_b = v² / (2 * μ * g)
-            let stoppingDistance = reactionDistance + brakingDistance; // d_s = d_r + d_b
+            let reactionDistance = v0 * t_r;                     
+            let brakingDistance = (v0 * v0) / (2 * mu * g);       
+            let stoppingDistance = reactionDistance + brakingDistance; 
 
             reactionDistanceText.innerHTML = reactionDistance.toFixed(2);
             brakingDistanceText.innerHTML = brakingDistance.toFixed(2);
@@ -256,7 +291,6 @@ Usia Pengemudi:
         document.getElementById("startBtn").onclick = () => {
             if (running) return;
             
-            // Reset Data Grafik Sebelum Mulai
             velocityChart.data.labels = [];
             velocityChart.data.datasets[0].data = [];
             velocityChart.update();
@@ -273,6 +307,11 @@ Usia Pengemudi:
             
             lastTime = performance.now();
             animate();
+            
+            // Opsional: Tutup panel otomatis saat simulasi jalan agar layar luas
+            if (window.innerWidth <= 768 && !panel.classList.contains("hidden")) {
+                toggleBtn.click();
+            }
         };
 
         /* ===================================================
@@ -306,28 +345,24 @@ Usia Pengemudi:
         };
 
         /* ===================================================
-           LOOPING ANIMASI BERBASIS FISIKA NYATA (TIME-DELTA)
+           LOOPING ANIMASI BERBASIS FISIKA NYATA
         =================================================== */
         function animate() {
             if (!running) return;
 
             let now = performance.now();
-            let dt = (now - lastTime) / 1000; // Hitung selisih waktu antar frame dalam satuan detik
+            let dt = (now - lastTime) / 1000; 
             lastTime = now;
 
-            if (dt > 0.1) dt = 0.1; // Pengaman jika terjadi drop frame parah
+            if (dt > 0.1) dt = 0.1; 
             simTime += dt;
 
-            // 1. Gerakan Mobil A (GLB - Kecepatan Tetap)
             zA -= speedA_ms * dt;
             mobilA.setAttribute("position", `0 0 ${zA}`);
 
-            // 2. Gerakan Mobil B (Hukum Newton & Kinematika GLBB)
             if (simTime < t_r) {
-                // Sesaat sebelum injak rem (Kecepatan Konstan)
                 currentSpeedB = v0;
             } else {
-                // Setelah t_r tercapai (Injak Rem + Pengaruh Deselerasi Lintasan Basah)
                 if (!brakingActive) {
                     brakingActive = true;
                     statusText.innerHTML = "Status: Rem Diinjak! Ban Slip di Jalan Basah.";
@@ -336,7 +371,6 @@ Usia Pengemudi:
                     if (brakeSound) brakeSound.play();
                 }
                 
-                // Rumus Pengurangan Kecepatan Realtime: v_t = v_0 - (a * t) -> di mana a = μ * g
                 currentSpeedB -= (mu * g) * dt; 
                 if (currentSpeedB < 0) currentSpeedB = 0;
             }
@@ -344,30 +378,26 @@ Usia Pengemudi:
             zB -= currentSpeedB * dt;
             mobilB.setAttribute("position", `0 0 ${zB}`);
 
-            // 3. Sinkronisasi Kamera & Efek Cuaca Mengunci Posisi Mobil B
             const camera = document.querySelector("[camera]");
             camera.setAttribute("position", `0 2 ${zB + 6}`);
             if (envSky) envSky.setAttribute("position", `0 0 ${zB}`);
             if (rainEffect) rainEffect.setAttribute("position", `0 0 ${zB}`);
 
-            // 4. Update Spidometer & Update Realtime Grafik Garis
             let currentKmh = currentSpeedB * 3.6;
             speedometer.innerHTML = Math.round(currentKmh) + " km/jam";
 
-            // Push data koordinat (Waktu, Kecepatan) ke grafik Chart.js tiap frame
             velocityChart.data.labels.push(simTime.toFixed(2));
             velocityChart.data.datasets[0].data.push(currentKmh);
-            velocityChart.update('none'); // 'none' mematikan animasi internal Chart.js demi efisiensi render
+            velocityChart.update('none'); 
 
-            // 5. Logika Cek Jarak/Kecelakaan (Jarak = zB - zA karena sumbu Z negatif ke depan)
             let jarakMobil = zB - zA;
 
-            if (jarakMobil < 1.8) { // Batas dimensi fisik benturan bumper mobil
-                statusText.innerHTML = "STATUS: TERJADI TABRAKAN! Jarak reaksi & pengereman tidak mencukupi.";
+            if (jarakMobil < 1.8) { 
+                statusText.innerHTML = "STATUS: TERJADI TABRAKAN! Jarak tidak mencukupi.";
                 statusText.style.color = "#c0392b";
                 running = false;
             } else if (currentSpeedB === 0) {
-                statusText.innerHTML = "STATUS: BERHASIL BERHENTI AMAN! Kendaraan tidak menabrak objek depan.";
+                statusText.innerHTML = "STATUS: BERHASIL BERHENTI AMAN!";
                 statusText.style.color = "#27ae60";
                 running = false;
             }
@@ -380,7 +410,7 @@ Usia Pengemudi:
         // Inisialisasi Pertama
         calculatePhysics();
 
-        // Pembuatan Marka Jalan Otomatis sepanjang 5000 meter
+        // Pembuatan Marka Jalan
         const container = document.getElementById("markaContainer");
         for (let i = 0; i < 5000; i += 15) {
             let marka = document.createElement("a-box");
@@ -393,5 +423,4 @@ Usia Pengemudi:
         }
     </script>
 </body>
-
 </html>
