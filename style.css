@@ -190,9 +190,12 @@ canvas{
 ========================= */
 
 #toggleUI{
+
   position: fixed;
+
   top: 15px;
   right: 15px;
+
   z-index: 9999;
 
   background: #1e293b;
@@ -201,14 +204,17 @@ canvas{
   border: none;
   border-radius: 12px;
 
-  padding: 12px 18px;
+  padding: 10px 16px;
 
   font-size: 16px;
   font-weight: bold;
 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
+  width: auto;
+  min-width: unset;
 
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+}
 /* =========================
    PANEL MOBILE
 ========================= */
@@ -257,5 +263,11 @@ canvas{
     width: 100vw !important;
     height: 100vh !important;
   }
+
+}
+.panel.hide{
+
+  transform: translateX(-120%);
+  opacity: 0;
 
 }
