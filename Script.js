@@ -457,21 +457,11 @@ calculatePhysics
 ========================= */
 
 calculatePhysics();
+
 /* =========================
    TOGGLE PANEL
 ========================= */
 
-const toggleBtn =
-document.getElementById("toggleUI");
-
-const panel =
-document.getElementById("panel");
-
-toggleBtn.onclick = () => {
-
-  panel.classList.toggle("hide");
-
-};
 /* =========================
    TOGGLE PANEL
 ========================= */
@@ -482,8 +472,8 @@ document.getElementById("toggleUI");
 const panel =
 document.getElementById("panel");
 
-toggleUI.addEventListener("click", () => {
+toggleUI.onclick = () => {
 
   panel.classList.toggle("hide");
 
-});
+};
